@@ -63,8 +63,10 @@ function saveRecipesToStorage(recipes) {
   // B1. TODO - Complete the functionality as described in this function
   //            header. It is possible in only a single line, but should
   //            be no more than a few lines.
+  localStorage.setItem('recipes', JSON.stringify(recipes));
 }
 
+const mainElement = document.querySelector('main');
 /**
  * Adds the necesarry event handlers to <form> and the clear storage
  * <button>.
@@ -72,9 +74,30 @@ function saveRecipesToStorage(recipes) {
 function initFormHandler() {
 
   // B2. TODO - Get a reference to the <form> element
+  const formElement = document.querySelector('form');
   
   // B3. TODO - Add an event listener for the 'submit' event, which fires when the
   //            submit button is clicked
+  const submitElement = document.querySelector('form button[type="submit"]');
+  submitElement.addEventListener("click", function() {
+    // B4
+    const formData = new FormData(formElement);
+    // B5
+    const recipeObject = {};
+    for (let key of formData.keys()) {
+      recipeObject[key] = formData.get(key);
+    }
+    // B6
+    const recipeCardElement = document.createElement('recipe-card');
+    // B7
+    recipeCardElement.data = recipeObject;
+    // B8
+    mainElement.append(recipeCardElement);
+    // B9
+    const storedRecipes = JSON.parse(localStorage.getItem('recipes')) || [];
+    storedRecipes.push(recipeObject);
+    localStorage.setItem('recipes', JSON.stringify(storedRecipes));
+  });
 
   // Steps B4-B9 will occur inside the event listener from step B3
   // B4. TODO - Create a new FormData object from the <form> element reference above
@@ -88,10 +111,14 @@ function initFormHandler() {
   //            then save the recipes array back to localStorage
 
   // B10. TODO - Get a reference to the "Clear Local Storage" button
+  const clearStorageElement = document.querySelector('button.danger');
   // B11. TODO - Add a click event listener to clear local storage button
+  clearStorageElement.addEventListener("click", function() {
+    localStorage.clear();
+    mainElement.innerHTML = '';
+  });
   
   // Steps B12 & B13 will occur inside the event listener from step B11
   // B12. TODO - Clear the local storage
   // B13. TODO - Delete the contents of <main>
-
 }
